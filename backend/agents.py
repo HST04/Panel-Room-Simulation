@@ -152,45 +152,49 @@ class OptimizationAgent:
         }
 
 
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+
 class DiagnosticAgent:
     def __init__(self):
         self.rag = SubstationRAG()
+        load_dotenv()
+        api_key = os.getenv("GEMINI_API_KEY")
+        if api_key and api_key != "INSERT_YOUR_GEMINI_API_KEY_HERE":
+            genai.configure(api_key=api_key)
+            self.model = genai.GenerativeModel("gemini-2.5-flash")
+        else:
+            self.model = None
 
     def query(self, user_question):
-        # 1. Search manuals
+        # 1. Search manuals via ChromaDB
         matches = self.rag.search(user_question, top_k=2)
         
         if not matches:
             return "I couldn't find specific instructions in the manuals for your question. Please verify your query keywords (e.g. 'T-4 trip', 'DC Fail', 'P14-C1 overcurrent')."
 
-        # 2. Format a professional diagnostic response
-        response = f"### Substation Diagnostic System Analysis\n\n"
-        response += f"Based on your query: *\"{user_question}\"*, I retrieved relevant documents from the electrical panel library:\n\n"
-        
-        for i, match in enumerate(matches):
-            response += f"#### Source Document {i+1}: {match['source']} (Match Score: {match['score']})\n"
-            response += f"```text\n{match['content']}\n```\n\n"
-            
-        response += "---\n"
-        response += "#### Recommended Action Plan for Operator:\n"
-        
-        # Add quick summary steps depending on query keywords
-        lower_q = user_question.lower()
-        if "t-4" in lower_q or "transformer" in lower_q:
-            response += "1. **Check Relay Display flags**: Verify if WTI (winding) or OTI (oil) or Buchholz trip is active.\n"
-            response += "2. **Inspect Cooling Contactor**: Check if fans are running or if control fuses (F1-F4) in tap cabinet are blown.\n"
-            response += "3. **Do not force close**: If a Buchholz trip is registered, test gas combustibility first; arcing might have occurred.\n"
-            response += "4. **Acknowledge and Reset**: Clean alarms, rotate 86 Lockout switch back, and close the VCB."
-        elif "dc fail" in lower_q or "battery" in lower_q:
-            response += "1. **AC Input check**: Confirm AC incoming power to battery charger is ON (MCCB DB-2).\n"
-            response += "2. **Fuse Check**: Test Battery Charger DC output fuses and battery link fuses (32A).\n"
-            response += "3. **Ground Fault test**: Verify leakages on positive or negative lines at DCDB.\n"
-            response += "4. **Trip Safely**: With DC failed, safety relays are DEAD. Trip breakers mechanically using front panel red push levers if load rises."
-        elif "p14" in lower_q or "compressor" in lower_q:
-            response += "1. **Log Current Peak**: Read Ia, Ib, Ic fault registers on protection relay CSAD-F-170.\n"
-            response += "2. **Verify Load Friction**: Inspect compressor flywheel, verify it rotates freely.\n"
-            response += "3. **Reset Relay**: Press reset button on CSAD relay face plate, reset 86 Lockout relay, check spring charged blue LED, then CLOSE."
-        else:
-            response += "1. Identify and isolate the tripped panel feeder circuit.\n2. Consult the specific manual text above for diagnostic values (trip limits, curves, fuse ratings).\n3. Clear the physical fault, reset the relay lockouts, verify spring charge, and re-close."
-            
-        return response
+        # 2. Build context from retrieved documents
+        context_text = "\n\n".join([
+            f"--- Source: {m['source']} ---\n{m['content']}" for m in matches
+        ])
+
+        if not self.model:
+            # Fallback if API key is not configured
+            return f"**[GEMINI API KEY MISSING]** Please add your GEMINI_API_KEY to backend/.env.\n\nRetrieved Context:\n{context_text}"
+
+        # 3. Call Gemini
+        prompt = f"""
+You are the Substation Diagnostic RAG Agent for an 11kV electrical panel room.
+Use the following context from technical manuals to answer the user's question. Provide a professional, concise, and structured recommended action plan for the operator. If the context does not contain the answer, say you don't know based on the manuals.
+
+Context:
+{context_text}
+
+Operator Question: {user_question}
+"""
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            return f"Error contacting Gemini API: {str(e)}"
