@@ -1,0 +1,47 @@
+================================================================================
+SUBSTATION MANUAL: DC CONTROL POWER FAILURE (DC FAIL) PROTOCOL
+Doc ID: DC-SOP-FAIL-02
+================================================================================
+
+1. GENERAL DESCRIPTION & CRITICAL WARNING
+The substation control circuits, protection relays, indicators, and trip coils operate on 110V DC auxiliary power supplied by the station Battery Bank and Battery Charger.
+- Nominal Voltage: 110V DC (102V to 121V range)
+- Battery Chemistry: Lead-Acid / VRLA type
+
+> [!CAUTION]
+> A "DC FAIL" status is a critical emergency. If the DC supply fails, protection relays cannot trip breakers in the event of an electrical short-circuit or fault, exposing the entire substation to catastrophic fire risk.
+
+2. DETECTING DC FAILURE
+DC Failure is flagged by:
+- Red LED "DC FAIL" lit on panel tops (Grid #12 of annunciator panels shows "DC FAIL ALARM").
+- Audio buzzer activates on the tap-changer control panel.
+- All digital ammeters and protecting relays may lose display backlighting.
+
+3. DIAGNOSTIC SEQUENCE
+Execute the following actions immediately upon a "DC FAIL" warning:
+
+STEP 1: Verify the DC Charger Main Supply
+Check the Battery Charger control cabinet panel:
+   - Check if the AC Incoming Supply LED is ON. If OFF, check the MCCB on the AC distribution box (DB-2).
+   - If AC supply is normal, inspect the Battery Charger output voltmeter. It should read ~110-115V. If it reads 0V, the charger DC fuse is likely blown.
+STEP 2: Inspect the DC Distribution Board (DCDB)
+   - Open the DCDB cabinet.
+   - Inspect the main incoming fuses and individual panel outgoings.
+   - Using a multimeter, measure voltage at the busbar. If busbar voltage is <90V, the batteries are depleted or disconnected.
+STEP 3: Battery Bank Inspection
+   - Measure the terminal voltage of the entire battery bank.
+   - Check for loose inter-cell connectors or corrosion.
+   - Check the battery isolator fuse link (typically 32A). If blown, do NOT replace without checking for ground faults first.
+STEP 4: Test for Earth Faults on DC System
+   - A single earth fault (positive or negative to earth) will not cause a trip, but a double earth fault can bypass safety switches and cause spurious breaker trips.
+   - Check the ground-leakage detector meter on the DCDB.
+   - If ground-fault leakage is indicated, isolate panel outgoing DC fuses one-by-one to pinpoint the leaky panel circuit.
+STEP 5: Recovery and Hand-Trip Safeguards
+   - If DC power cannot be restored within 15 minutes and the substation is under high load, operators must manually isolate non-critical outgoing loads.
+   - In case of a major high-temperature or overload alarm while DC is failed, breakers must be tripped manually using the mechanical TRIP push lever directly on the front VCB breaker housing (located behind the panel door), since the electrical control switch will not function.
+STEP 6: Re-establishing DC Power
+   - Turn off the Battery Charger AC main input.
+   - Replace any blown DC fuses or reset the DC MCB.
+   - Turn the Battery Charger AC main back ON.
+   - Confirm that the "DC FAIL" LED on all 13 panels switches OFF and that protection relays boot up successfully.
+   - Clear and reset the annunciator buzzers.

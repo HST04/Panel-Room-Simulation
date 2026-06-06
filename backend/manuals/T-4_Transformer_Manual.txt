@@ -1,0 +1,54 @@
+================================================================================
+SUBSTATION MANUAL: STEP-DOWN POWER TRANSFORMER T-4 (33kV / 11kV, 10MVA)
+Doc ID: TR-MAN-T4-09
+================================================================================
+
+1. GENERAL DESCRIPTION
+The T-4 Power Transformer is a oil-immersed, ONAN/ONAF cooling type, step-down transformer. 
+- Primary Voltage: 33,000 Volts (33 kV)
+- Secondary Voltage: 11,000 Volts (11 kV)
+- Capacity: 10 Mega-Volt-Amperes (10 MVA)
+- Oil Type: Mineral Insulating Oil class II
+
+2. TEMPERATURE LIMITS & ALARMS
+The T-4 panel monitors two critical temperature indexes using PT100 sensors:
+A. Oil Temperature Indicator (OTI):
+   - Normal Operating: 50°C to 75°C
+   - High Temperature Alarm: 85°C (Annunciator Panel Grid #3: "OTI HIGH ALARM")
+   - Thermal Trip Limit: 95°C (Trips both 33kV Outgoing-2 and 11kV Incomer-2)
+B. Winding Temperature Indicator (WTI):
+   - Normal Operating: 60°C to 80°C
+   - High Temperature Alarm: 90°C (Annunciator Panel Grid #4: "WTI HIGH ALARM")
+   - Thermal Trip Limit: 110°C (Trips breakers immediately: "WTI TRIP")
+
+3. BUCHHOLZ RELAY ALARMS
+The Buchholz relay is a safety device mounted on the pipe linking the transformer main tank to the conservator. It protects against internal faults:
+- Gas Accumulation: Slow gas accumulation triggers the alarm (Grid #5: "BUCHHOLZ ALARM"). This indicates dielectric breakdown, insulation aging, or minor hot spots.
+- Oil Surge/Low Oil Level: A sudden surge of oil or major level drop trips the transformer (Grid #6: "BUCHHOLZ TRIP").
+
+4. TROUBLESHOOTING & DIAGNOSTIC SEQUENCE ON TRIP
+If the T-4 Panel trips, execute the following step-by-step diagnostic sequence immediately:
+STEP 1: Identify the Trip Source
+Check the relay display panel on T-4 PANEL. Look for active flags:
+   - If WTI TRIP flag is RED: Winding temperature exceeded 110°C.
+   - If OTI TRIP flag is RED: Oil temperature exceeded 95°C.
+   - If BUCHHOLZ TRIP flag is RED: Gas surge or critical low oil level occurred.
+   - If OVERCURRENT/EARTH FAULT is active: Electrical short-circuit in windings or secondary cables.
+STEP 2: Cooling System Inspection (For WTI/OTI trips)
+Verify if the cooling fans (ONAF system) are operating:
+   - Check the fan control switch status. If in AUTO, ensure the contactor has closed.
+   - Inspect individual cooling fan blades for mechanical obstruction.
+   - Verify control circuit fuse F1-F4 in the Tap Changer Control Cabinet. If blown, replace with 6A HRC fuse.
+STEP 3: Gas Analysis (For Buchholz Alarm/Trip)
+   - Do NOT re-energize the transformer under any circumstances if a Buchholz trip occurred.
+   - Extract a gas sample from the petcock valve at the top of the Buchholz relay using a gas-sampling syringe.
+   - Perform a combustibility test. If the gas burns with a blue flame, it contains Hydrogen/Carbon Monoxide, indicating electrical arcing or wood insulation pyrolysis.
+STEP 4: Winding Resistance & Insulation Testing
+   - Isolate the 33kV side and 11kV side breakers.
+   - Perform a Megger test (5000V DC) between HV-LV, HV-Earth, and LV-Earth.
+   - Minimum acceptable insulation resistance at 30°C is 1000 Megohms.
+STEP 5: Relay Reset Sequence
+   - Once the physical cause is cleared, press the yellow ACCEPT button on the T-4 panel to acknowledge the alarm.
+   - Press the black RESET button to clear the annunciator locks.
+   - Reset the master trip auxiliary relay (86 Lockout Relay) by turning its mechanical knob on the panel faceplate back to normal position.
+   - Switch the breaker control switch to CLOSE to re-engage the primary incomer breaker.

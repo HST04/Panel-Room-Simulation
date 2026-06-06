@@ -1,0 +1,51 @@
+================================================================================
+SUBSTATION MANUAL: OVERCURRENT PROTECTION FOR PANEL P14-C1 (OLD COMPRESSOR FEEDER)
+Doc ID: REL-MAN-P14-C1
+================================================================================
+
+1. EQUIPMENT DESCRIPTION
+Panel P14-C1 serves as the outgoing feeder to the Old Compressor Panel.
+- Protection Relay: CSE CSAD-F-170 Microprocessor-based Overcurrent and Earth Fault Relay.
+- Breaker Type: Vacuum Circuit Breaker (VCB), 11 kV, 630A rating.
+- Current Transformer (CT) Ratio: 100/1 A (100 Amps primary corresponds to 1 Amp secondary).
+
+2. RELAY CRITICAL SETTINGS
+A. Overcurrent Stage 1 (Low-set, I>):
+   - Setting: 60% of CT primary (60 Amps)
+   - Curve: IDMT (Inverse Definite Minimum Time) Normal Inverse 3sec (NI 3/10)
+   - Time Multiplier Setting (TMS): 0.15
+   - Operational Limit: Continuous loads exceeding 60A will trip the VCB after a delay determined by the inverse curve (e.g. at 90A, trips in ~6.5 seconds; at 120A, trips in ~3.8 seconds).
+B. Overcurrent Stage 2 (High-set, I>>):
+   - Setting: 120% of CT primary (120 Amps)
+   - Delay: Definite Time (DT) of 0.05 seconds (Instantaneous trip)
+   - Trigger Conditions: Direct short-circuit, rotor lock-up in old compressor motor.
+
+3. TYPICAL INCIDENTS & ANOMALY SIGNATURES
+The old compressor motor (induction type, 45 kW) draws high starting currents.
+- Normal Starting Spike: Up to 55A for 1.8 seconds. This is normal and should not trip the relay.
+- Anomaly Flag: If current spikes to 70A-80A during normal running operations (non-starting window), it indicates:
+  - Motor mechanical bearing wear / increased friction.
+  - Compressor head loading failure.
+  - Single-phasing or severe voltage drop at the compressor terminal box.
+- Critical Trip Fault: If current exceeds 120A, an instantaneous Stage 2 (I>>) trip occurs.
+
+4. RECOVERY & RESET SOP
+If Panel P14-C1 trips on Overcurrent:
+STEP 1: Verify the Fault Code
+   - Read the LCD display on the CSAD-F-170 Protection Relay.
+   - Look for the trip indicator flags:
+     - "I>" indicator flag: Inverse Time Overcurrent (Overload).
+     - "I>>" indicator flag: Instantaneous Overcurrent (Short circuit).
+     - "Io>" indicator flag: Earth Fault (Phase-to-ground fault).
+STEP 2: Log the Peak Fault Current
+   - Use the navigation buttons on the relay to read the fault memory history:
+     - Record Ia, Ib, Ic peak values (current in Phases L1, L2, L3).
+STEP 3: Mechanical Clearance
+   - Coordinate with the compressor maintenance crew to inspect the motor casing temperature.
+   - Manually rotate the compressor flywheel to verify it is not physically jammed.
+STEP 4: Relay & Panel Reset
+   - Once cleared, press the reset button on the CSAD-F-170 relay panel (indicated by a small reset arrow or label). The red trip indicator LED on the relay face should turn off.
+   - Acknowledge and reset the annunciator grid buzzer.
+   - Reset the Master Trip lockout relay (86 Lockout Relay) on the front panel.
+   - Ensure the VCB spring charge motor has run and the blue "SPRING CHARGED" LED is lit. If not, charge the spring manually using the emergency charging lever.
+   - Return the Breaker Control Switch (rotary) to CLOSE to re-energize the compressor feeder.
